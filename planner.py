@@ -29,7 +29,7 @@ def _build_policy() -> SARLPolicy:
     if weights.exists():
         import torch
 
-        p.model.load_state_dict(torch.load(str(weights), map_location="cpu"))
+        p.model.load_state_dict(torch.load(str(weights), map_location="cpu"), strict=True)
     p.set_device("cpu")
     p.set_phase("test")
     p.time_step = _TIME_STEP
@@ -79,19 +79,15 @@ def step(features: dict) -> list[float]:
 
     if not human_states:
         dx, dy = gx - px, gy - py
-        desired_theta = float(np.arctan2(dy, dx))
-        angle_error = (desired_theta - theta + np.pi) % (2 * np.pi) - np.pi
-        v = min(_V_PREF, float(np.hypot(dx, dy)))
-        omega = float(angle_error) / _TIME_STEP
-        return [v, omega]
+        dist_to_goal = float(np.hypot(dx, dy))
+        if dist_to_goal < 1e-6:
+            return [0.0, 0.0]
+        scale = min(_V_PREF, dist_to_goal) / dist_to_goal
+        return [dx * scale, dy * scale]
 
     joint_state = JointState(self_state, human_states)
     action = _policy.predict(joint_state)
-
-    v = float(np.hypot(action.vx, action.vy))
-    desired_theta = float(np.arctan2(action.vy, action.vx))
-    omega = (desired_theta - theta) / _TIME_STEP
-    return [v, float(omega)]
+    return [float(action.vx), float(action.vy)]
 
 
 def on_reset(episode_id: str, initial_state: dict | None) -> None:

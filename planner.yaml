@@ -1,5 +1,7 @@
-action_type: differential_drive
+action_type: omnidirectional
+sensor_needs: []
 obs_policy: latest_only
+controls_orientation: false
 
 depends:
   global_plan: true
