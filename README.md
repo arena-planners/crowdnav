@@ -5,7 +5,7 @@ Arena wrapper for **CrowdNav** (SARL policy). Adapted from [vita-epfl/CrowdNav](
 ## Run
 
 ```sh
-arena launch mobile:=drl mobile.planner:=crowdnav
+arena launch robot.mobile:=drl robot.mobile.planner:=crowdnav
 ```
 
 Requires a global plan. Defaults to `nav2/navfn`.
