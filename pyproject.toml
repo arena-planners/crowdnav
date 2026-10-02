@@ -5,7 +5,7 @@ description = "CrowdNav planner wrapper for the arena_planners bridge."
 requires-python = ">=3.10"
 dependencies = [
     "arena_planners",
-    "torch>=1.9",
+    "torch>=2.14,<2.15",
     "numpy>=1.21,<2",
     "gym>=0.21",
     "scipy>=1.7",
